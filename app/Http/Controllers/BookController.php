@@ -18,15 +18,25 @@ class BookController extends Controller
         return \response(json_encode($response));
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
+
+        $this->validate($request, [
+            'name' => 'required',
+            'isbn' => 'required',
+            'authors' => 'required',
+            'country' => 'required',
+            'number_of_pages' => 'required',
+            'publisher' => 'required',
+            'release_date' => 'required'
+        ]);
         $inputs = $request->input();
         $response = $this->mproxy->createBook($inputs);
         return \response(json_encode($response));
@@ -43,7 +53,6 @@ class BookController extends Controller
         $response = $this->mproxy->getBookById($id);
         return \response(json_encode($response));
     }
-
 
     /**
      * Update the specified resource in storage.

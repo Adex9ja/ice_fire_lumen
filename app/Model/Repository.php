@@ -12,13 +12,17 @@ class Repository
 
     private $fire_ice_api_url = "https://www.anapioficeandfire.com/api/books";
 
-    public function getExternalBooks($book_name)
+    public function getExternalBooks($query)
     {
         $response = $this->makeExternalApiCall();
         if($response != null){
             $data = [];
             foreach ($response as $item){
-                if($item['name'] == $book_name){
+                if(array_key_exists('name', $query) && str_contains($item['name'], $query['name'])
+                    || array_key_exists('country', $query) && str_contains($item['country'], $query['country'])
+                    || array_key_exists('publisher', $query) && str_contains($item['publisher'], $query['publisher'])
+                    || array_key_exists('release_date', $query) && str_contains($item['released'], $query['release_date'])){
+
                     $new_item = [
                         'name' => $item['name'],
                         'isbn' => $item['isbn'],
@@ -53,16 +57,38 @@ class Repository
         try
         {
             $book = new Book;
-            $book->name = $inputs['name'];
-            $book->isbn = $inputs['isbn'];
-            $book->authors = $inputs['authors'];
-            $book->country = $inputs['country'];
-            $book->number_of_pages = $inputs['number_of_pages'];
-            $book->publisher = $inputs['publisher'];
-            $book->release_date = $inputs['release_date'];
-            $result = $book->saveOrFail();
-            if($result){
-                $data[] = [ 'book' => (object) $inputs ];
+            $data = [
+                'name' => $inputs['name'],
+                'isbn' => $inputs['isbn'],
+                'country' => $inputs['country'],
+                'number_of_pages' => $inputs['number_of_pages'],
+                'publisher' => $inputs['publisher'],
+                'release_date' => $inputs['release_date']
+            ];
+
+            $check = [
+                'name' => $inputs['name'],
+                'isbn' => $inputs['isbn'],
+            ];
+
+            $created_book = $book->firstOrCreate( $check, $data );
+            if($created_book != null){
+                foreach ($inputs['authors'] as $item){
+                    $author = new Author;
+                    $data = [
+                        'name' => $item
+                    ];
+                    $created_author = $author->firstOrCreate($data);
+
+                    $author_book = new BookAuthor;
+                    $data = [
+                        'book_id' => $created_book->id,
+                        'author_id' => $created_author->id
+                    ];
+                    $author_book->firstOrCreate($data);
+                }
+
+                $data = [ 'book' => (object) $inputs ];
                 return new JsonResponse(201, 'success', $data);
             }
             else

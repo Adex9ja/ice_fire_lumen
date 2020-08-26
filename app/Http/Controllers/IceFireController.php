@@ -13,8 +13,8 @@ class IceFireController extends Controller
         return "Hello world!";
     }
 
-    public function getExternalBooks(){
-        $query = $_GET['name'];
+    public function getExternalBooks(Request $request){
+        $query = $request->input();
         $response = $this->mproxy->getExternalBooks($query);
         return json_encode($response);
     }
