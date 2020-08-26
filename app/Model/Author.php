@@ -8,5 +8,10 @@ class Author extends Model
 {
     protected $guarded = [];
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'pivot', 'id'];
+
+    public function toArray()
+    {
+        return array_values($this->attributesToArray());
+    }
 }

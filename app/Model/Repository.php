@@ -110,16 +110,15 @@ class Repository
         {
             $book = Book::find($id);
             if($book != null){
-                $book->name = $inputs['name'];
-                $book->isbn  = $inputs['isbn'];
-                $book->authors = $inputs['authors'];
-                $book->country = $inputs['country'];
-                $book->number_of_pages = $inputs['number_of_pages'];
-                $book->publisher = $inputs['publisher'];
-                $book->release_date = $inputs['release_date'];
+                $book->name = in_array('name', $inputs) ? $inputs['name'] : $book->name;
+                $book->isbn  = in_array('isbn', $inputs) ? $inputs['isbn'] : $book->isbn;
+                $book->country = in_array('country', $inputs) ? $inputs['country'] : $book->country;
+                $book->number_of_pages = in_array('number_of_pages', $inputs) ? $inputs['number_of_pages'] : $book->number_of_pages;
+                $book->publisher = in_array('publisher', $inputs) ? $inputs['publisher'] : $book->publisher;
+                $book->release_date = in_array('release_date', $inputs) ? $inputs['release_date'] : $book->release_date;
                 $result = $book->saveOrFail();
                 if($result)
-                    return new JsonResponse(200, 'success', $book);
+                    return new JsonResponse(200, 'success', $book, "The book $book->name was updated successfully");
                 else
                     return new JsonResponse(500, 'Error occurs!');
             }
@@ -136,7 +135,7 @@ class Repository
         if($book != null){
             $result = $book->delete();
             if($result){
-                return new JsonResponse(204, 'success');
+                return new JsonResponse(204, 'success', "The book $book->name was deleted successfully");
             }
             else
                 return new JsonResponse(500, 'Error occurs!');

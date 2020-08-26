@@ -20,6 +20,7 @@ $router->group( ['prefix' => '/api/v1/books'], function () use ($router) {
     $router->get('/{id:[\d]+}', 'BookController@show');
     $router->patch('/{id:[\d]+}', 'BookController@update');
     $router->delete('/{id:[\d]+}', 'BookController@destroy');
+    $router->post('/{id:[\d]+}/delete', 'BookController@destroy');
 });
 
 
