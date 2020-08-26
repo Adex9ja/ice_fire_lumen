@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 class IceFireController extends Controller
 {
 
-    public function index(){
-        return "Hello world!";
-    }
 
     public function getExternalBooks(Request $request){
         $query = $request->input();

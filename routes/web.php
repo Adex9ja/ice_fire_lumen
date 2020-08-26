@@ -12,9 +12,6 @@
 */
 
 
-
-$router->get('/', 'IceFireController@index');
-
 $router->get('/api/external-books', 'IceFireController@getExternalBooks');
 
 $router->group( ['prefix' => '/api/v1/books'], function () use ($router) {
